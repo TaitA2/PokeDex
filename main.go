@@ -13,7 +13,9 @@ func main() {
 		fmt.Print("PokeDex > ")
 		scanner.Scan()
 		userInput := scanner.Text()
-		fmt.Println("Your command was:",cleanInput(userInput)[0])
+		cleanUserInput := cleanInput(userInput)
+		userCommand := cleanUserInput[0]
+		fmt.Println("Your command was:", userCommand)
 
 	}
 }
