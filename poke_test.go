@@ -34,9 +34,11 @@ func TestCleanInput(t *testing.T) {
 		}
 		// check each word in output for errors
 		for i := range actual {
-			word := actual[i]
-			if word != c.expected[i] {
-				t.Errorf("\033[31mFAIL\033[0m\nWant - %s\nGot  - %s", c.expected, actual)
+			if !t.Failed() {
+				word := actual[i]
+				if word != c.expected[i] {
+					t.Errorf("\033[31mFAIL\033[0m\nWant - %s\nGot  - %s", c.expected, actual)
+				}
 			}
 		}
 	}

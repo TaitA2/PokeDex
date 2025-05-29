@@ -2,10 +2,17 @@ package main
 
 import "fmt"
 
-func main(){
+func main() {
 	fmt.Println("Hello, World!")
 }
 
 func cleanInput(text string) []string {
-	return []string{}
+	words := strings.Split(text, " ")
+	var cleanWords []string
+	for _, word := range words {
+		if word != "" {
+			cleanWords = append(cleanWords, word)
+	}
+}
+	return cleanWords
 }
