@@ -14,10 +14,10 @@ var supportedCommands = make(map[string]cliCommand)
 
 func main() {
 	createSupportedCommands()
-	config := config{Next: "https://pokeapi.co/api/v2/location-area/"}
+	config := config{}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("PokeDex > ")
+		fmt.Print("\nPokeDex > ")
 		scanner.Scan()
 		userInput := scanner.Text()
 		cleanUserInput := cleanInput(userInput)
@@ -122,6 +122,9 @@ func commandMapb(c *config) error {
 
 
 func mapHelper(url string, c *config) error {
+	if !strings.Contains(url, "location-area"){
+		url = "https://pokeapi.co/api/v2/location-area/"
+	}
 	res, err := http.Get(url)
 	if err != nil {
 		return err
