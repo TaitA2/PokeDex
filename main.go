@@ -4,13 +4,19 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/Taita2/PokeDex/internal"
 )
 
 
 var supportedCommands = make(map[string]cliCommand)
+
+var Cache = pokecache.NewCache(7*time.Second)
 
 func main() {
 	createSupportedCommands()
@@ -125,14 +131,23 @@ func mapHelper(url string, c *config) error {
 	if !strings.Contains(url, "location-area"){
 		url = "https://pokeapi.co/api/v2/location-area/"
 	}
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
+	data, ok := Cache.Get(url)
 
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&c); err != nil {
+	if !ok {
+		res, err := http.Get(url)
+			if err != nil {
+				return err
+		}
+		defer res.Body.Close()
+		data, err = io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		Cache.Add(url, data)
+		fmt.Println("\033[32mHTTP!!\033[0m")
+	} else {fmt.Println("\033[32mCACHE!!\033[0m")}
+
+	if err := json.Unmarshal(data, &c); err != nil {
 		return err
 	}
 

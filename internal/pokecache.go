@@ -11,7 +11,7 @@ type Cache struct{
 }
 
 func NewCache(d time.Duration) Cache {
-	var c Cache
+	var c = Cache{entry:make(map[string]cacheEntry), mu: &sync.Mutex{}}
 	go c.reapLoop(d)
 	return c
 
@@ -29,6 +29,8 @@ func (c Cache) Add(key string, val []byte) {
 }
 
 func (c Cache) Get(key string) ([]byte , bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	entry, ok := c.entry[key]
 	if !ok {
 		return nil, false
@@ -37,12 +39,14 @@ func (c Cache) Get(key string) ([]byte , bool) {
 }
 
 func (c Cache) reapLoop(d time.Duration) {
-	time.Sleep(d)
-	for k, entry := range c.entry {
-		c.mu.Lock()
-		defer c.mu.Unlock()
-		if time.Since(entry.createdAt) > d {
-			delete(c.entry, k)
+	for {
+		time.Sleep(d)
+		for k, entry := range c.entry {
+			c.mu.Lock()
+			if time.Since(entry.createdAt) > d {
+				delete(c.entry, k)
+			}
+			c.mu.Unlock()
 		}
 	}
 }
