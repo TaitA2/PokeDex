@@ -14,7 +14,7 @@ func cleanInput(text string) []string {
 	var cleanWords []string
 	for _, word := range words {
 		if word != "" {
-			cleanWords = append(cleanWords, word)
+			cleanWords = append(cleanWords, strings.ToLower(word))
 	}
 }
 	return cleanWords
