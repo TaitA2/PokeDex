@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 	"time"
+	"github.com/Taita2/PokeDex/internal/pokecache"
 )
 
 func TestAddGet(t *testing.T) {
@@ -24,7 +25,7 @@ func TestAddGet(t *testing.T) {
 	}
 	for i, c := range cases {
 		t.Run(fmt.Sprintf("Test case %v", i), func(t *testing.T) {
-			cache := NewCache(delay)
+			cache := pokecache.NewCache(delay)
 			cache.Add(c.key, c.val)
 			val, ok := cache.Get(c.key)
 			if !ok {
@@ -42,7 +43,7 @@ func TestAddGet(t *testing.T) {
 func TestReapLoop(t *testing.T) {
 	const baseTime = 7 * time.Millisecond
 	const waitTime = baseTime + 7 * time.Millisecond
-	cache := NewCache(baseTime)
+	cache := pokecache.NewCache(baseTime)
 	url := "https://example.com"
 	cache.Add(url, []byte("testdata"))
 
