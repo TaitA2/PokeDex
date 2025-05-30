@@ -143,9 +143,9 @@ func mapHelper(url string, c *config) error {
 		if err != nil {
 			return err
 		}
-		Cache.Add(url, data)
 		fmt.Println("\033[32mHTTP!!\033[0m")
 	} else {fmt.Println("\033[32mCACHE!!\033[0m")}
+	Cache.Add(url, data)
 
 	if err := json.Unmarshal(data, &c); err != nil {
 		return err
