@@ -11,6 +11,8 @@ import (
 
 var supportedCommands = make(map[string]cliCommand)
 
+var pokeDex = make(map[string]Pokemon)
+
 var Cache = pokecache.NewCache(7*time.Second)
 
 func main() {
@@ -69,6 +71,12 @@ func createSupportedCommands() {
 		name: "explore",
 		description: "List all pokemon in the specified location.",
 		callback: commandExplore,
+	}
+
+	supportedCommands["catch"] = cliCommand{
+		name: "catch",
+		description: "Attempt to catch specified Pokemon.",
+		callback: commandCatch,
 	}
 
 }
