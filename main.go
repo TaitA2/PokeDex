@@ -3,17 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/Taita2/PokeDex/internal/pokecache"
 	"os"
 	"time"
-	"github.com/Taita2/PokeDex/internal/pokecache"
 )
-
 
 var supportedCommands = make(map[string]cliCommand)
 
 var pokeDex = make(map[string]Pokemon)
 
-var Cache = pokecache.NewCache(7*time.Second)
+var Cache = pokecache.NewCache(7 * time.Second)
 
 func main() {
 	createSupportedCommands()
@@ -23,6 +22,9 @@ func main() {
 		fmt.Print("\nPokeDex > ")
 		scanner.Scan()
 		userInput := scanner.Text()
+		if userInput == "" {
+			continue
+		}
 		cleanUserInput := cleanInput(userInput)
 		userCommand := cleanUserInput[0]
 
@@ -36,72 +38,71 @@ func main() {
 }
 
 type cliCommand struct {
-	name		string
-	description	string
-	callback func(*config, []string) error
+	name        string
+	description string
+	callback    func(*config, []string) error
 }
 
 func createSupportedCommands() {
 
 	supportedCommands["exit"] = cliCommand{
-		name: "exit",
+		name:        "exit",
 		description: "Exit the PokeDex.",
-		callback: commandExit,
-		}
+		callback:    commandExit,
+	}
 
 	supportedCommands["help"] = cliCommand{
-		name: "help",
+		name:        "help",
 		description: "Display this help message.",
-		callback: commandHelp,
-		}
+		callback:    commandHelp,
+	}
 
 	supportedCommands["map"] = cliCommand{
-		name: "map",
+		name:        "map",
 		description: "List the NEXT 20 locations in the Pokemon world.",
-		callback: commandMap,
+		callback:    commandMap,
 	}
 
 	supportedCommands["mapb"] = cliCommand{
-		name: "mapb",
+		name:        "mapb",
 		description: "List the PREVIOUS 20 locations in the Pokemon world.",
-		callback: commandMapb,
+		callback:    commandMapb,
 	}
 
 	supportedCommands["explore"] = cliCommand{
-		name: "explore",
+		name:        "explore",
 		description: "List all pokemon in the specified location.",
-		callback: commandExplore,
+		callback:    commandExplore,
 	}
 
 	supportedCommands["catch"] = cliCommand{
-		name: "catch",
+		name:        "catch",
 		description: "Attempt to catch specified Pokemon.",
-		callback: commandCatch,
+		callback:    commandCatch,
 	}
 
 	supportedCommands["inspect"] = cliCommand{
-		name: "inspect",
+		name:        "inspect",
 		description: "Inspect specified Pokemon in your PokeDex.",
-		callback: commandInspect,
+		callback:    commandInspect,
 	}
 
 	supportedCommands["pokedex"] = cliCommand{
-		name: "pokedex",
+		name:        "pokedex",
 		description: "View all available Pokemon in your PokeDex.",
-		callback: commandPokedex,
+		callback:    commandPokedex,
 	}
 
 }
 
-type config struct{
-	Count		int		`json:"count"`
-	Next		string	`json:"next"`
-	Previous	string	`json:"previous"`
-	Results		[]result`json:"results"`
+type config struct {
+	Count    int      `json:"count"`
+	Next     string   `json:"next"`
+	Previous string   `json:"previous"`
+	Results  []result `json:"results"`
 }
 
-type result struct{
-	Name	string	`json:"name"`
-	Url		string	`json:"url"`
+type result struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
 }
-
