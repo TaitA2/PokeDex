@@ -28,7 +28,7 @@ func commandCatch(c *config, args []string) error {
 	difficulty := pokemon.BaseExperience
 
 	if rand.IntN(1 + difficulty/50) == 0 {
-		fmt.Println(name, "was caught!")
+		fmt.Println(name, "was caught!\nYou may now inspect it with the inspect command.")
 		pokeDex[name] = pokemon
 	} else {
 		fmt.Println(name, "escaped!")
