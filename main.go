@@ -79,6 +79,12 @@ func createSupportedCommands() {
 		callback: commandCatch,
 	}
 
+	supportedCommands["inspect"] = cliCommand{
+		name: "inspect",
+		description: "Inspect specified Pokemon in your PokeDex.",
+		callback: commandInspect,
+	}
+
 }
 
 type config struct{
