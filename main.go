@@ -2,15 +2,10 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
-	"strings"
 	"time"
-
-	"github.com/Taita2/PokeDex/internal"
+	"github.com/Taita2/PokeDex/internal/pokecache"
 )
 
 
@@ -38,21 +33,10 @@ func main() {
 	}
 }
 
-func cleanInput(text string) []string {
-	words := strings.Split(text, " ")
-	var cleanWords []string
-	for _, word := range words {
-		if word != "" {
-			cleanWords = append(cleanWords, strings.ToLower(word))
-	}
-}
-	return cleanWords
-}
-
 type cliCommand struct {
 	name		string
 	description	string
-	callback func(*config) error
+	callback func(*config, ...string) error
 }
 
 func createSupportedCommands() {
@@ -81,80 +65,23 @@ func createSupportedCommands() {
 		callback: commandMapb,
 	}
 
+	supportedCommands["explore"] = cliCommand{
+		name: "explore",
+		description: "List all pokemon in the specified location.",
+		callback: commandExplore,
+	}
+
 }
 
 type config struct{
 	Count		int		`json:"count"`
 	Next		string	`json:"next"`
 	Previous	string	`json:"previous"`
-	Results		[]result`json:"results"`
+	Results		[]mapResult`json:"results"`
 }
 
-type result struct{
+type mapResult struct{
 	Name	string	`json:"name"`
 	Url		string	`json:"url"`
 }
 
-func commandExit(c *config) error {
-	fmt.Println("PokeDex exiting...")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp(c *config) error {
-	fmt.Println("\nWelcome to the PokeDex!!")
-	fmt.Print("Available commands are as follows:\n\n")
-	for _, cmd := range supportedCommands{
-		fmt.Printf("%s \t\t- Usage: %s\n", cmd.name,cmd.description)
-		
-	}
-	fmt.Println()
-	return nil
-}
-
-
-
-func commandMap(c *config) error {
-	url := c.Next
-	mapHelper(url, c)
-	return nil
-}
-
-func commandMapb(c *config) error {
-	url := c.Previous
-	mapHelper(url, c)
-	return nil
-}
-
-
-func mapHelper(url string, c *config) error {
-	if !strings.Contains(url, "location-area"){
-		url = "https://pokeapi.co/api/v2/location-area/"
-	}
-	data, ok := Cache.Get(url)
-
-	if !ok {
-		res, err := http.Get(url)
-			if err != nil {
-				return err
-		}
-		defer res.Body.Close()
-		data, err = io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		fmt.Println("\033[32mHTTP!!\033[0m")
-	} else {fmt.Println("\033[32mCACHE!!\033[0m")}
-	Cache.Add(url, data)
-
-	if err := json.Unmarshal(data, &c); err != nil {
-		return err
-	}
-
-	for _, l := range c.Results {
-		fmt.Println(l.Name)
-	}
-
-	return nil
-	
-}
