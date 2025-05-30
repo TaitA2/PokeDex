@@ -9,6 +9,10 @@ import (
 )
 
 func commandCatch(c *config, args []string) error {
+	if len(args) < 1 {
+		fmt.Println("You must specify which pokemon to catch.")
+		return nil
+	}
 	name := args[0]
 	url := "https://pokeapi.co/api/v2/pokemon/"+name
 

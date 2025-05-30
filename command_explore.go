@@ -8,6 +8,10 @@ import (
 
 
 func commandExplore(c *config, args []string) error {
+	if len(args) < 1 {
+		fmt.Println("You must specify which area to explore.")
+		return nil
+	}
 	url := "https://pokeapi.co/api/v2/location-area/"+args[0]
 
 	data, err := pokeapi.ApiHelper(url, &Cache)
