@@ -3,12 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
+	"github.com/Taita2/PokeDex/internal/pokeapi"
 )
 
-func commandMap(c *config, args ...string) error {
+func commandMap(c *config, args []string) error {
 	url := c.Next
 
 	if !strings.Contains(url, "location-area"){
@@ -18,7 +17,7 @@ func commandMap(c *config, args ...string) error {
 	return mapHelper(url, c)
 }
 
-func commandMapb(c *config, args ...string) error {
+func commandMapb(c *config, args []string) error {
 	url := c.Previous
 
 	if !strings.Contains(url, "location-area"){
@@ -30,21 +29,10 @@ func commandMapb(c *config, args ...string) error {
 
 func mapHelper(url string, c *config) error {
 
-	data, ok := Cache.Get(url)
-
-	if !ok {
-		res, err := http.Get(url)
-			if err != nil {
-				return err
-		}
-		defer res.Body.Close()
-		data, err = io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
+	data, err := pokeapi.ApiHelper(url, &Cache)
+	if err != nil {
+		return err
 	}
-
-	Cache.Add(url, data)
 
 	if err := json.Unmarshal(data, &c); err != nil {
 		return err

@@ -26,7 +26,7 @@ func main() {
 
 		cmd, ok := supportedCommands[userCommand]
 		if ok {
-			cmd.callback(&config)
+			cmd.callback(&config, cleanUserInput[1:])
 		} else {
 			fmt.Printf("Unknown command: '%s', use 'help' for a list of available commands.\n", userCommand)
 		}
@@ -36,7 +36,7 @@ func main() {
 type cliCommand struct {
 	name		string
 	description	string
-	callback func(*config, ...string) error
+	callback func(*config, []string) error
 }
 
 func createSupportedCommands() {
@@ -77,10 +77,10 @@ type config struct{
 	Count		int		`json:"count"`
 	Next		string	`json:"next"`
 	Previous	string	`json:"previous"`
-	Results		[]mapResult`json:"results"`
+	Results		[]result`json:"results"`
 }
 
-type mapResult struct{
+type result struct{
 	Name	string	`json:"name"`
 	Url		string	`json:"url"`
 }
